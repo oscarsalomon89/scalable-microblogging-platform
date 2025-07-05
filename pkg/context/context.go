@@ -22,6 +22,14 @@ func New(request *http.Request) context.Context {
 	return context.WithValue(request.Context(), requestIDKey, requestID)
 }
 
+func NewDetachedWithRequestID(ctx context.Context) context.Context {
+	requestID := ctx.Value(requestIDKey)
+	if requestID == nil {
+		return context.Background()
+	}
+	return context.WithValue(context.Background(), requestIDKey, requestID)
+}
+
 func newRequestID() string {
 	var id string
 	logID, err := uuid.NewV4()

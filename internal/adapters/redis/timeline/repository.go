@@ -6,33 +6,22 @@ import (
 	"errors"
 	"fmt"
 	"sort"
-	"sync"
 	"time"
 
 	"github.com/oscarsalomon89/go-hexagonal/internal/application/tweet"
 	"github.com/redis/go-redis/v9"
 )
 
-var (
-	instance *cache
-	once     sync.Once
-)
-
-type cache struct {
+type timelineCache struct {
 	client *redis.Client
+	ttl    time.Duration
 }
 
-func NewCache(c *redis.Client) (*cache, error) {
-	once.Do(func() {
-		instance = &cache{
-			client: c,
-		}
-	})
-
-	return instance, nil
+func NewCache(c *redis.Client, ttl time.Duration) (*timelineCache, error) {
+	return &timelineCache{client: c, ttl: ttl}, nil
 }
 
-func (r *cache) GetTimeline(ctx context.Context, userID string) ([]tweet.Tweet, error) {
+func (r *timelineCache) GetTimeline(ctx context.Context, userID string) ([]tweet.Tweet, error) {
 	key := fmt.Sprintf("timeline:%s", userID)
 
 	data, err := r.client.Get(ctx, key).Result()
@@ -55,7 +44,7 @@ func (r *cache) GetTimeline(ctx context.Context, userID string) ([]tweet.Tweet, 
 	return timelineCache, nil
 }
 
-func (r *cache) SetTimeline(ctx context.Context, userID string, tweets []tweet.Tweet) error {
+func (r *timelineCache) SetTimeline(ctx context.Context, userID string, tweets []tweet.Tweet) error {
 	key := fmt.Sprintf("timeline:%s", userID)
 
 	data, err := json.Marshal(tweets)
@@ -63,14 +52,14 @@ func (r *cache) SetTimeline(ctx context.Context, userID string, tweets []tweet.T
 		return fmt.Errorf("failed to serialize timeline data for user %s: %w", userID, err)
 	}
 
-	if err := r.client.Set(ctx, key, string(data), 1*time.Minute).Err(); err != nil {
+	if err := r.client.Set(ctx, key, string(data), r.ttl).Err(); err != nil {
 		return fmt.Errorf("failed to set timeline cache for user %s: %w", userID, err)
 	}
 
 	return nil
 }
 
-func (r *cache) InvalidateTimeline(ctx context.Context, userID string) error {
+func (r *timelineCache) InvalidateTimeline(ctx context.Context, userID string) error {
 	key := fmt.Sprintf("timeline:%s", userID)
 	if err := r.client.Del(ctx, key).Err(); err != nil {
 		return fmt.Errorf("failed to invalidate timeline cache for user %s: %w", userID, err)

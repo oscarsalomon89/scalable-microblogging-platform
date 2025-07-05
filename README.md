@@ -110,10 +110,10 @@ docker-compose run --rm migrate
 
 Main endpoints:
 
-- `POST /v1/users` - Register user
-- `POST /v1/users/follow` - Follow a user
-- `POST /v1/tweets` - Create tweet
-- `GET /v1/tweets` - List tweets
+- `POST /api/v1/users` - Register user
+- `POST /api/v1/users/follow` - Follow a user
+- `POST /api/v1/tweets` - Create tweet
+- `GET /api/v1/tweets/timeline` - List tweets
 
 (See source code for full details)
 

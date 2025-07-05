@@ -7,16 +7,16 @@ const (
 )
 
 type TweetHandlerRouter struct {
-	tweethdl *tweetHandler
+	hdl *handler
 }
 
-func NewRouter(tweethdl *tweetHandler) *TweetHandlerRouter {
+func NewRouter(hdl *handler) *TweetHandlerRouter {
 	return &TweetHandlerRouter{
-		tweethdl: tweethdl,
+		hdl: hdl,
 	}
 }
 
 func (r *TweetHandlerRouter) AddRoutes(router *gin.RouterGroup) {
-	router.POST(tweetPath, r.tweethdl.CreateTweet)
-	router.GET(tweetPath+"/timeline", r.tweethdl.GetTimeline)
+	router.POST(tweetPath, r.hdl.CreateTweet)
+	router.GET(tweetPath+"/timeline", r.hdl.GetTimeline)
 }

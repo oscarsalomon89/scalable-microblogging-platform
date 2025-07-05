@@ -30,6 +30,7 @@ type (
 		Address           string
 		Password          string
 		DB                int
+		TTL               time.Duration
 		DefaultExpiration time.Duration
 	}
 
@@ -81,7 +82,8 @@ func NewConfig() (Configuration, error) {
 			Address:           getEnv("CACHE_ADDRESS", "localhost:6379"),
 			Password:          getEnv("CACHE_PASSWORD", ""),
 			DB:                getEnvInt("CACHE_DB", 0),
-			DefaultExpiration: time.Duration(getEnvInt("CACHE_DEFAULT_EXPIRATION", 3600)),
+			TTL:               time.Duration(getEnvInt("CACHE_TTL", 60)) * time.Second,
+			DefaultExpiration: time.Duration(getEnvInt("CACHE_DEFAULT_EXPIRATION", 3600)) * time.Second,
 		},
 	}, nil
 }

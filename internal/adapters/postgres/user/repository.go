@@ -60,6 +60,7 @@ func (r *userRepository) ExistsByID(ctx context.Context, id string) (bool, error
 	return count > 0, nil
 }
 
+// TODO: Consider refactoring this function to a separate package if follow logic grows.
 func (r *userRepository) IsFollowing(ctx context.Context, followerID, followeeID string) (bool, error) {
 	var count int64
 	if err := r.db.MasterConn.
@@ -73,6 +74,7 @@ func (r *userRepository) IsFollowing(ctx context.Context, followerID, followeeID
 	return count > 0, nil
 }
 
+// TODO: Consider refactoring this function to a separate package if follow logic grows.
 func (r *userRepository) FollowUser(ctx context.Context, followerID, followeeID string) error {
 	if followerID == "" || followeeID == "" {
 		return fmt.Errorf("followerID or followeeID is empty")
@@ -100,6 +102,7 @@ func (r *userRepository) FollowUser(ctx context.Context, followerID, followeeID 
 	return nil
 }
 
+// TODO: Consider refactoring this function to a separate package if follow logic grows.
 func (r *userRepository) GetFollowers(ctx context.Context, id string) ([]string, error) {
 	var followers []string
 	if err := r.db.MasterConn.
@@ -113,6 +116,7 @@ func (r *userRepository) GetFollowers(ctx context.Context, id string) ([]string,
 	return followers, nil
 }
 
+// TODO: Consider refactoring this function to a separate package if follow logic grows.
 func (r *userRepository) GetFollowees(ctx context.Context, id string) ([]string, error) {
 	var followees []string
 	if err := r.db.MasterConn.

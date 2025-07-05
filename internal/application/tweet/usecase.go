@@ -6,7 +6,6 @@ import (
 
 	"github.com/oscarsalomon89/go-hexagonal/internal/application/user"
 	twcontext "github.com/oscarsalomon89/go-hexagonal/pkg/context"
-	"golang.org/x/sync/errgroup"
 )
 
 type (
@@ -24,7 +23,7 @@ type (
 		GetTweetsByUserIDs(ctx context.Context, userIDs []string, limit, offset int) ([]Tweet, error)
 	}
 
-	Cache interface {
+	TimelineCache interface {
 		InvalidateTimeline(ctx context.Context, userID string) error
 		GetTimeline(ctx context.Context, userID string) ([]Tweet, error)
 		SetTimeline(ctx context.Context, userID string, tweets []Tweet) error
@@ -34,11 +33,11 @@ type (
 		userFinder    UsersFinder
 		tweetReader   TweetReader
 		tweetsCreator TweetsCreator
-		cache         Cache
+		cache         TimelineCache
 	}
 )
 
-func NewTweetUseCase(userFinder UsersFinder, tweetReader TweetReader, tweetsCreator TweetsCreator, cache Cache) *usecase {
+func NewTweetUseCase(userFinder UsersFinder, tweetReader TweetReader, tweetsCreator TweetsCreator, cache TimelineCache) *usecase {
 	return &usecase{
 		userFinder:    userFinder,
 		tweetReader:   tweetReader,
@@ -48,8 +47,6 @@ func NewTweetUseCase(userFinder UsersFinder, tweetReader TweetReader, tweetsCrea
 }
 
 func (uc *usecase) CreateTweet(ctx context.Context, tweet *Tweet) error {
-	logger := twcontext.Logger(ctx)
-
 	if exist, err := uc.userFinder.ExistsByID(ctx, tweet.UserID); err != nil {
 		return fmt.Errorf("failed to check user ID: %w", err)
 	} else if !exist {
@@ -60,26 +57,8 @@ func (uc *usecase) CreateTweet(ctx context.Context, tweet *Tweet) error {
 		return fmt.Errorf("failed to create tweet: %w", err)
 	}
 
-	followers, err := uc.userFinder.GetFollowers(ctx, tweet.UserID)
-	if err != nil {
-		logger.WithError(err).Error("Failed to get followers of user")
-		return fmt.Errorf("failed to get followers: %w", err)
-	}
-
-	eg, groupCtx := errgroup.WithContext(ctx)
-	for _, followerID := range followers {
-		fID := followerID
-		eg.Go(func() error {
-			if err := uc.cache.InvalidateTimeline(groupCtx, fID); err != nil {
-				logger.WithError(err).WithField("follower_id", fID).Error("failed to invalidate timeline")
-			}
-			return nil
-		})
-	}
-
-	if err := eg.Wait(); err != nil {
-		logger.WithError(err).Error("one or more timeline invalidations failed")
-	}
+	detachedCtx := twcontext.NewDetachedWithRequestID(ctx)
+	go uc.invalidateFollowersTimelinesAsync(detachedCtx, tweet.UserID)
 
 	return nil
 }

@@ -22,7 +22,7 @@ var tweetFactories = fx.Provide(
 	),
 	fx.Annotate(
 		timelinerepo.NewCache,
-		fx.As(new(tweet.Cache)),
+		fx.As(new(tweet.TimelineCache)),
 	),
 	fx.Annotate(
 		tweet.NewTweetUseCase,

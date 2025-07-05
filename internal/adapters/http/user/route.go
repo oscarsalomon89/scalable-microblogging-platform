@@ -7,16 +7,16 @@ const (
 )
 
 type UserHandlerRouter struct {
-	userhdl *handler
+	hdl *handler
 }
 
-func NewRouter(userhdl *handler) *UserHandlerRouter {
+func NewRouter(hdl *handler) *UserHandlerRouter {
 	return &UserHandlerRouter{
-		userhdl: userhdl,
+		hdl: hdl,
 	}
 }
 
 func (r *UserHandlerRouter) AddRoutesV1(v1 *gin.RouterGroup) {
-	v1.POST(userPath, r.userhdl.CreateUser)
-	v1.POST(userPath+"/follow", r.userhdl.FollowUser)
+	v1.POST(userPath, r.hdl.CreateUser)
+	v1.POST(userPath+"/follow", r.hdl.FollowUser)
 }

@@ -6,14 +6,10 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	"github.com/oscarsalomon89/go-hexagonal/internal/adapters/http/common"
 	"github.com/oscarsalomon89/go-hexagonal/internal/application/tweet"
 	twcontext "github.com/oscarsalomon89/go-hexagonal/pkg/context"
-	"github.com/oscarsalomon89/go-hexagonal/pkg/httperrors"
-	"github.com/oscarsalomon89/go-hexagonal/pkg/validator"
 )
-
-const headerUserID = "X-User-ID"
 
 type (
 	TweetUseCase interface {
@@ -21,48 +17,38 @@ type (
 		GetTimeline(ctx context.Context, userID string, limit, offset int) ([]tweet.Tweet, error)
 	}
 
-	tweetHandler struct {
-		useCase TweetUseCase
+	handler struct {
+		usecase TweetUseCase
 	}
 )
 
-func NewHandler(useCase TweetUseCase) *tweetHandler {
-	return &tweetHandler{useCase: useCase}
+func NewHandler(useCase TweetUseCase) *handler {
+	return &handler{usecase: useCase}
 }
 
-func (h *tweetHandler) CreateTweet(c *gin.Context) {
+func (h *handler) CreateTweet(c *gin.Context) {
 	ctx := twcontext.New(c.Request)
 	logger := twcontext.Logger(ctx)
 
-	userIDStr := c.GetHeader(headerUserID)
-	if userIDStr == "" {
-		handleError(c, httperrors.NewSimple(httperrors.ErrBadRequest, "Missing X-User-ID header"))
-		return
-	}
-
-	_, err := uuid.Parse(userIDStr)
+	userID, err := common.ValidateUserID(c)
 	if err != nil {
-		handleError(c, httperrors.NewSimple(httperrors.ErrBadRequest, "Invalid UUID in X-User-ID header"))
+		logger.WithError(err).Error("Failed to validate user ID")
+		handleError(c, err)
 		return
 	}
 
-	var req createTweetRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		handleError(c, httperrors.NewSimple(httperrors.ErrBadRequest, "Failed to bind JSON"))
-		return
-	}
-
-	if err := validator.Validate(req); err != nil {
-		logger.WithError(err).Error("Failed to validate request")
-		handleError(c, httperrors.New(httperrors.ErrBadRequest, "Failed to validate request", err.Error(), nil))
+	req, err := common.BindAndValidate[createTweetRequest](c)
+	if err != nil {
+		logger.WithError(err).Error("Failed to bind JSON")
+		handleError(c, err)
 		return
 	}
 
 	tweetDomain := tweet.Tweet{
-		UserID:  userIDStr,
+		UserID:  userID,
 		Content: req.Content,
 	}
-	if err := h.useCase.CreateTweet(c.Request.Context(), &tweetDomain); err != nil {
+	if err := h.usecase.CreateTweet(ctx, &tweetDomain); err != nil {
 		logger.WithError(err).Error("Failed to create tweet")
 		handleError(c, err)
 		return
@@ -74,19 +60,20 @@ func (h *tweetHandler) CreateTweet(c *gin.Context) {
 	})
 }
 
-func (h *tweetHandler) GetTimeline(c *gin.Context) {
+func (h *handler) GetTimeline(c *gin.Context) {
 	ctx := twcontext.New(c.Request)
 	logger := twcontext.Logger(ctx)
 
-	userIDStr := c.GetHeader(headerUserID)
-	if userIDStr == "" {
-		handleError(c, httperrors.NewSimple(httperrors.ErrBadRequest, "Missing X-User-ID header"))
+	userID, err := common.ValidateUserID(c)
+	if err != nil {
+		logger.WithError(err).Error("Failed to validate user ID")
+		handleError(c, err)
 		return
 	}
 
-	limit, offset := getPaginationParams(c)
+	limit, offset := parsePaginationParams(c)
 
-	tweets, err := h.useCase.GetTimeline(ctx, userIDStr, limit, offset)
+	tweets, err := h.usecase.GetTimeline(ctx, userID, limit, offset)
 	if err != nil {
 		logger.WithError(err).Error("Failed to get timeline")
 		handleError(c, err)
@@ -107,15 +94,17 @@ func (h *tweetHandler) GetTimeline(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func getPaginationParams(c *gin.Context) (int, int) {
+const defaultLimit = 100
+
+func parsePaginationParams(c *gin.Context) (int, int) {
 	var err error
-	limit := 100
+	limit := defaultLimit
 	offset := 0
 
 	if limitParam := c.Query("limit"); limitParam != "" {
 		limit, err = strconv.Atoi(limitParam)
 		if err != nil {
-			limit = 100
+			limit = defaultLimit
 		}
 	}
 
