@@ -1,4 +1,4 @@
-package userhdl
+package user
 
 import "github.com/gin-gonic/gin"
 
@@ -18,4 +18,5 @@ func NewRouter(userhdl *handler) *UserHandlerRouter {
 
 func (r *UserHandlerRouter) AddRoutesV1(v1 *gin.RouterGroup) {
 	v1.POST(userPath, r.userhdl.CreateUser)
+	v1.POST(userPath+"/follow", r.userhdl.FollowUser)
 }

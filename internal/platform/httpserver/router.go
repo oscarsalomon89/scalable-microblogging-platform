@@ -12,8 +12,8 @@ import (
 	"go.uber.org/fx"
 )
 
-func NewHTTPGinServer(router *gin.Engine) *http.Server {
-	port := os.Getenv("PORT")
+func NewHTTPGinServer() *http.Server {
+	port := os.Getenv("WEB_SERVER_PORT")
 
 	if port == "" {
 		port = "8080"
@@ -21,12 +21,11 @@ func NewHTTPGinServer(router *gin.Engine) *http.Server {
 
 	return &http.Server{
 		Addr:    fmt.Sprintf(":%s", port),
-		Handler: router,
+		Handler: gin.Default(),
 	}
 }
 
 func StartServer(lc fx.Lifecycle, srv *http.Server) *http.Server {
-	// fx.Lifecycle allows us to hook into the application startup and shutdown.
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {

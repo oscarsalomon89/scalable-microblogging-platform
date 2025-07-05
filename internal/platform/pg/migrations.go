@@ -21,7 +21,7 @@ func RunMigrations(cfg config.Database) error {
 		cfg.Sslmode,
 	)
 
-	migrationsPath := "file://" + os.Getenv(config.AppPathEnv) + "/migrations"
+	migrationsPath := fmt.Sprintf("file://%s/migrations", os.Getenv(config.AppPathEnv))
 	m, err := migrate.New(
 		migrationsPath,
 		dsn,

@@ -1,13 +1,28 @@
 CREATE TABLE users (
-  id BIGSERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL UNIQUE,
-  email VARCHAR(255) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL,
-  email_validated BOOLEAN DEFAULT false,
-  created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
-  updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
-  deleted_at TIMESTAMPTZ,
-  created_by VARCHAR(255),
-  updated_by VARCHAR(255),
-  deleted_by VARCHAR(255)
+    id UUID PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    deleted_at TIMESTAMPTZ
 );
+
+CREATE TABLE tweets (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL CHECK (length(content) <= 280),
+    created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    deleted_at TIMESTAMPTZ
+);
+
+CREATE TABLE follows (
+    follower_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    followee_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (follower_id, followee_id)
+);
+
+CREATE INDEX idx_followee ON follows (followee_id);
+CREATE INDEX idx_follower ON follows (follower_id);
+
+CREATE INDEX idx_tweets_user_created_at ON tweets (user_id, created_at DESC);

@@ -1,0 +1,33 @@
+.env
+.env.example
+
+.git
+.gitignore
+
+migrations
+tests
+
+.dockerignore
+Dockerfile*
+docker-compose*.yml
+
+# IDE and editor files
+.vscode
+.vs
+.idea
+.classpath
+.project
+.settings
+
+# Build outputs and binaries
+bin/
+obj/
+dist/
+build/
+out/
+; pkg/
+*/bin/
+
+# Documentation
+*.md
+LICENSE

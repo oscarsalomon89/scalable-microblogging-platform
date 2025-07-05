@@ -40,15 +40,7 @@ migrate-version:
 	@echo "Getting migration version..."
 	@$(MIGRATE) version
 
-# Default target
-all: build run
-
 # Core commands
-build:
-	@echo "Building the project..."
-	@mkdir -p $(BUILD_DIR)
-	APP_NAME=main go build -gcflags "all=-N -l" -o $(BUILD_DIR)/main -ldflags "-X main.Version=$(VERSION)" $(ROOT_DIR)/cmd/
-
 run:
 	@echo "Running the project..."
 	@go run $(ROOT_DIR)/cmd/

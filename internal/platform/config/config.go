@@ -4,6 +4,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/oscarsalomon89/go-hexagonal/internal/platform/environment"
@@ -19,8 +20,17 @@ const (
 
 type (
 	Configuration struct {
-		Scope    string
-		Database Database
+		APIVersion string
+		Scope      string
+		Database   Database
+		Cache      Cache
+	}
+
+	Cache struct {
+		Address           string
+		Password          string
+		DB                int
+		DefaultExpiration time.Duration
 	}
 
 	Database struct {
@@ -50,7 +60,8 @@ func NewConfig() (Configuration, error) {
 	}
 
 	return Configuration{
-		Scope: getEnv(scopeEnv, localScope),
+		APIVersion: getEnv("API_VERSION", "v1"),
+		Scope:      getEnv(scopeEnv, localScope),
 		Database: Database{
 			Name:               getEnv("DB_NAME", "testlocal"),
 			Host:               getEnv("DB_HOST", "localhost"),
@@ -65,6 +76,12 @@ func NewConfig() (Configuration, error) {
 			ConnectionTimeout:  getEnvInt("DB_CONNECTION_TIMEOUT", 200),
 			UseReplica:         getEnvBool("DB_USE_REPLICA", true),
 			BatchSize:          getEnvInt("DB_BATCH_SIZE", 200),
+		},
+		Cache: Cache{
+			Address:           getEnv("CACHE_ADDRESS", "localhost:6379"),
+			Password:          getEnv("CACHE_PASSWORD", ""),
+			DB:                getEnvInt("CACHE_DB", 0),
+			DefaultExpiration: time.Duration(getEnvInt("CACHE_DEFAULT_EXPIRATION", 3600)),
 		},
 	}, nil
 }
