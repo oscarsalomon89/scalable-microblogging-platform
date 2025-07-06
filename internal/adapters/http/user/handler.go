@@ -8,12 +8,14 @@ import (
 	"github.com/oscarsalomon89/go-hexagonal/internal/adapters/http/common"
 	"github.com/oscarsalomon89/go-hexagonal/internal/application/user"
 	twcontext "github.com/oscarsalomon89/go-hexagonal/pkg/context"
+	"github.com/oscarsalomon89/go-hexagonal/pkg/httperrors"
 )
 
 type (
 	UserUseCase interface {
 		CreateUser(ctx context.Context, user *user.User) error
 		FollowUser(ctx context.Context, followerID, followeeID string) error
+		UnfollowUser(ctx context.Context, followerID, followeeID string) error
 	}
 
 	handler struct {
@@ -75,5 +77,40 @@ func (h *handler) FollowUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, followUserResponse{
 		Message: "User followed successfully",
+	})
+}
+
+func (h *handler) UnfollowUser(c *gin.Context) {
+	ctx := twcontext.New(c.Request)
+	logger := twcontext.Logger(ctx)
+
+	userID, err := common.ValidateUserID(c)
+	if err != nil {
+		logger.WithError(err).Error("Failed to validate user ID")
+		handleError(c, err)
+		return
+	}
+
+	followeeID := c.Param("followeeID")
+	if followeeID == "" {
+		logger.Error("Followee ID is empty")
+		handleError(c, httperrors.NewSimple(httperrors.ErrBadRequest, "Followee ID is empty"))
+		return
+	}
+
+	if err := common.Validate(followUserRequest{FolloweeID: followeeID}); err != nil {
+		logger.WithError(err).Error("Failed to validate request")
+		handleError(c, err)
+		return
+	}
+
+	if err := h.usecase.UnfollowUser(ctx, userID, followeeID); err != nil {
+		logger.WithError(err).Error("Failed to unfollow user")
+		handleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, followUserResponse{
+		Message: "User unfollowed successfully",
 	})
 }

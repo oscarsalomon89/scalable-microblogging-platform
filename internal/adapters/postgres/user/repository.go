@@ -103,6 +103,34 @@ func (r *userRepository) FollowUser(ctx context.Context, followerID, followeeID 
 }
 
 // TODO: Consider refactoring this function to a separate package if follow logic grows.
+func (r *userRepository) UnfollowUser(ctx context.Context, followerID, followeeID string) error {
+	if followerID == "" || followeeID == "" {
+		return fmt.Errorf("followerID or followeeID is empty")
+	}
+
+	followerUUID, err := uuid.Parse(followerID)
+	if err != nil {
+		return fmt.Errorf("invalid followerID: %w", err)
+	}
+
+	followeeUUID, err := uuid.Parse(followeeID)
+	if err != nil {
+		return fmt.Errorf("invalid followeeID: %w", err)
+	}
+
+	if err := r.db.MasterConn.
+		WithContext(ctx).
+		Delete(&Follow{
+			FollowerID: followerUUID,
+			FolloweeID: followeeUUID,
+		}).Error; err != nil {
+		return fmt.Errorf("error deleting follow relationship: %w", err)
+	}
+
+	return nil
+}
+
+// TODO: Consider refactoring this function to a separate package if follow logic grows.
 func (r *userRepository) GetFollowers(ctx context.Context, id string) ([]string, error) {
 	var followers []string
 	if err := r.db.MasterConn.

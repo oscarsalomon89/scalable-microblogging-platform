@@ -9,13 +9,13 @@ import (
 )
 
 type (
-	UsersFinder interface {
+	UserFinder interface {
 		ExistsByID(ctx context.Context, id string) (bool, error)
 		GetFollowers(ctx context.Context, id string) ([]string, error)
 		GetFollowees(ctx context.Context, userID string) ([]string, error)
 	}
 
-	TweetsCreator interface {
+	TweetCreator interface {
 		CreateTweet(ctx context.Context, tweet *Tweet) error
 	}
 
@@ -30,14 +30,14 @@ type (
 	}
 
 	usecase struct {
-		userFinder    UsersFinder
+		userFinder    UserFinder
 		tweetReader   TweetReader
-		tweetsCreator TweetsCreator
+		tweetsCreator TweetCreator
 		cache         TimelineCache
 	}
 )
 
-func NewTweetUseCase(userFinder UsersFinder, tweetReader TweetReader, tweetsCreator TweetsCreator, cache TimelineCache) *usecase {
+func NewTweetUseCase(userFinder UserFinder, tweetReader TweetReader, tweetsCreator TweetCreator, cache TimelineCache) *usecase {
 	return &usecase{
 		userFinder:    userFinder,
 		tweetReader:   tweetReader,

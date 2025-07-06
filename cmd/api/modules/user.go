@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	userhdl "github.com/oscarsalomon89/go-hexagonal/internal/adapters/http/user"
 	userrepo "github.com/oscarsalomon89/go-hexagonal/internal/adapters/postgres/user"
+	timelinerepo "github.com/oscarsalomon89/go-hexagonal/internal/adapters/redis/timeline"
 	"github.com/oscarsalomon89/go-hexagonal/internal/application/user"
 	"go.uber.org/fx"
 )
@@ -11,8 +12,12 @@ import (
 var userFactories = fx.Provide(
 	fx.Annotate(
 		userrepo.NewUserRepository,
-		fx.As(new(user.UsersCreator)),
-		fx.As(new(user.UsersFinder)),
+		fx.As(new(user.UserCreator)),
+		fx.As(new(user.UserFinder)),
+	),
+	fx.Annotate(
+		timelinerepo.NewCache,
+		fx.As(new(user.TimelineCache)),
 	),
 	fx.Annotate(
 		user.NewUserUseCase,

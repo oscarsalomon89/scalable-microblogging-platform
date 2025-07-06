@@ -15,11 +15,19 @@ func BindAndValidate[T any](c *gin.Context) (T, error) {
 		return req, httperrors.New(httperrors.ErrBadRequest, "Failed to bind JSON", err.Error(), nil)
 	}
 
-	if err := validator.Validate(req); err != nil {
-		return req, httperrors.New(httperrors.ErrBadRequest, "Failed to validate request", err.Error(), nil)
+	if err := Validate(req); err != nil {
+		return req, err
 	}
 
 	return req, nil
+}
+
+func Validate[T any](req T) error {
+	if err := validator.Validate(req); err != nil {
+		return httperrors.New(httperrors.ErrBadRequest, "Failed to validate request", err.Error(), nil)
+	}
+
+	return nil
 }
 
 func ValidateUserID(c *gin.Context) (string, error) {

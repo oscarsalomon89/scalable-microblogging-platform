@@ -19,4 +19,5 @@ func NewRouter(hdl *handler) *UserHandlerRouter {
 func (r *UserHandlerRouter) AddRoutesV1(v1 *gin.RouterGroup) {
 	v1.POST(userPath, r.hdl.CreateUser)
 	v1.POST(userPath+"/follow", r.hdl.FollowUser)
+	v1.DELETE(userPath+"/unfollow/:followeeID", r.hdl.UnfollowUser)
 }

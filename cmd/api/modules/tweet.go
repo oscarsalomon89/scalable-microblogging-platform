@@ -13,12 +13,12 @@ import (
 var tweetFactories = fx.Provide(
 	fx.Annotate(
 		tweetrepo.NewTweetRepository,
-		fx.As(new(tweet.TweetsCreator)),
+		fx.As(new(tweet.TweetCreator)),
 		fx.As(new(tweet.TweetReader)),
 	),
 	fx.Annotate(
 		userrepo.NewUserRepository,
-		fx.As(new(tweet.UsersFinder)),
+		fx.As(new(tweet.UserFinder)),
 	),
 	fx.Annotate(
 		timelinerepo.NewCache,

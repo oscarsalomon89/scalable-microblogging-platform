@@ -25,6 +25,10 @@ func handleError(c *gin.Context, err error) {
 		c.JSON(http.StatusNotFound, httperrors.NewSimple(httperrors.ErrNotFound, "Followee not found"))
 	case errors.Is(err, user.ErrAlreadyFollowing):
 		c.JSON(http.StatusConflict, httperrors.NewSimple(httperrors.ErrConflict, "Already following"))
+	case errors.Is(err, user.ErrNotFollowing):
+		c.JSON(http.StatusConflict, httperrors.NewSimple(httperrors.ErrConflict, "Not following"))
+	case errors.Is(err, user.ErrCannotUnfollowSelf):
+		c.JSON(http.StatusConflict, httperrors.NewSimple(httperrors.ErrConflict, "Cannot unfollow self"))
 	case errors.As(err, &apiError):
 		c.JSON(apiError.Code, apiError)
 	default:
