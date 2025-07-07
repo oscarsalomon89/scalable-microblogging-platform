@@ -66,22 +66,66 @@ cp .env.example .env
 
 ### Build and Run with Docker Compose
 
-This will start the API, PostgreSQL, Redis, and run DB migrations automatically:
+1. Start all services (API, DB, Redis):
 
 ```sh
-docker-compose up --build
+make compose-up
 ```
 
-- API available at: `http://localhost:8080`
-- PostgreSQL: `localhost:5432` (user: admin, pass: admin, db: twitterdb)
-- Redis: `localhost:6379`
+This will build and start all services defined in docker-compose.yml, including the API, PostgreSQL, and Redis.
 
-### Running Migrations Manually
+API available at: http://localhost:8080
+PostgreSQL: localhost:5432 (user: admin, pass: admin, db: twitterdb)
+Redis: localhost:6379
+
+2. View service logs:
+
+```sh
+make compose-logs
+```
+
+3. Stop all services:
+
+```sh
+make compose-down
+```
+
+4. Run tests:
+
+```sh
+make test
+```
+
+5. (Optional) Use alternate development environment
+   If you have a
+   docker-compose.dev.yml
+   for a different development stack:
+
+```sh
+make compose-dev-up
+# To stop dev services:
+make compose-dev-down
+```
+
+6. Running Migrations Manually
 
 To run migrations separately:
 
 ```sh
-docker-compose run --rm migrate
+make migrate-up    # Apply all pending migrations
+make migrate-down  # Revert the last migration
+```
+
+7. (Optional) Force migration
+
+```sh
+make migrate-force
+```
+
+8. Get migration version:
+
+```sh
+make migrate-version
 ```
 
 ---
@@ -104,6 +148,9 @@ docker-compose run --rm migrate
 ├── .env.example            # Example environment variables
 ```
 
+> **Note:**  
+> For a more detailed explanation of the project structure, architectural decisions, and package responsibilities, please refer to the [project wiki](https://github.com/oscarsalomon89/scalable-microblogging-platform/wiki#-arquitectura).
+
 ---
 
 ## API Endpoints
@@ -116,16 +163,19 @@ Main endpoints:
 - `POST /api/v1/tweets` - Create tweet
 - `GET /api/v1/tweets/timeline` - List tweets
 
-(See source code for full details)
+> **Note:**  
+> At this time, Swagger or OpenAPI documentation is not included due to project time constraints. However, you can find more detailed information about request/response formats and additional endpoints in the [project wiki](https://github.com/oscarsalomon89/scalable-microblogging-platform/wiki#-casos-de-uso).
+
+---
+
+## Further Documentation
+
+Project Wiki: [Project Wiki](https://github.com/oscarsalomon89/scalable-microblogging-platform/wiki) — Architecture guides, technical decisions, usage scenarios, and more.
+
+Design assumptions and decisions: [Design assumptions and decisions](docs/assumptions.md).
 
 ---
 
 ## Contributing
 
 Contributions are welcome! Please fork this repository and submit a pull request.
-
----
-
-## License
-
-This project is licensed under the MIT License.

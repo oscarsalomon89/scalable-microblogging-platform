@@ -4,9 +4,12 @@
 .git
 .gitignore
 
+# Project files
 migrations
 tests
+docs
 
+makefile
 .dockerignore
 Dockerfile*
 docker-compose*.yml
@@ -25,7 +28,6 @@ obj/
 dist/
 build/
 out/
-; pkg/
 */bin/
 
 # Documentation
