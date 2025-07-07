@@ -1,0 +1,174 @@
+{
+	"info": {
+		"_postman_id": "b94042c4-d2d3-4a8d-b78d-f7dc2b90e57d",
+		"name": "twitter",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22656365"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"oscar\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/users",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create tweet",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-User-ID",
+						"value": "12e414dc-d4e7-4c12-8f45-3c853760b0db",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"Package Oriented Design allows a developer to identify where a package belongs inside a Go project and the design guidelines the package must respect. It defines what a Go project is and how a Go project is structured.\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/tweets",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"tweets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unfollow User",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-User-ID",
+						"value": "bcae8ab1-d0f6-4c13-8939-adb81362a0e0",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/users/unfollow/5eacf01f-ac97-461e-8723-eb154dc031d9",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"unfollow",
+						"5eacf01f-ac97-461e-8723-eb154dc031d9"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Timelime",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-User-ID",
+						"value": "bcae8ab1-d0f6-4c13-8939-adb81362a0e0",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/api/v1/tweets/timeline",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"tweets",
+						"timeline"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Follow User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-User-ID",
+						"value": "bcae8ab1-d0f6-4c13-8939-adb81362a0e0",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"followee_id\": \"5eacf01f-ac97-461e-8723-eb154dc031d9\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/users/follow",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"follow"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

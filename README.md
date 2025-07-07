@@ -164,6 +164,13 @@ Main endpoints:
 > **Note:**  
 > At this time, Swagger or OpenAPI documentation is not included due to project time constraints. However, you can find more detailed information about request/response formats and additional endpoints in the [project wiki](https://github.com/oscarsalomon89/scalable-microblogging-platform/wiki#-casos-de-uso).
 
+**Postman Collection**
+
+A ready-to-use [Postman collection](docs/scalable-microblogging-platform.postman_collection.json) is included for easy testing and exploration of the API.  
+Just import it into Postman and start sending requests!
+
+See the [wiki](https://github.com/oscarsalomon89/scalable-microblogging-platform/wiki#-casos-de-uso) for usage details and example scenarios.
+
 ---
 
 ## Further Documentation
