@@ -3,13 +3,16 @@ package tweet_test
 import (
 	"context"
 	"fmt"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/oscarsalomon89/go-hexagonal/internal/application/tweet"
 	"github.com/oscarsalomon89/go-hexagonal/internal/application/tweet/mocks"
 	"github.com/oscarsalomon89/go-hexagonal/internal/application/user"
 	twcontext "github.com/oscarsalomon89/go-hexagonal/pkg/context"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 type dependencies struct {
@@ -107,11 +110,40 @@ func Test_usecase_CreateTweet(t *testing.T) {
 				tweetsCreator: mocks.NewTweetCreator(t),
 				cache:         mocks.NewTimelineCache(t),
 			}
+
+			// Synchronize with the goroutine
+			var wg sync.WaitGroup
+			if tt.name == "should create tweet successfully" {
+				followers := []string{"f1", "f2"}
+				ctx := twcontext.NewDetachedWithRequestID(tt.input.ctx)
+				d.userFinder.On("GetFollowers", ctx, tt.input.tweet.UserID).Return(followers, nil)
+				wg.Add(len(followers))
+				for _, follower := range followers {
+					d.cache.On("InvalidateTimeline", ctx, follower).Return(nil).Run(func(args mock.Arguments) {
+						wg.Done()
+					})
+				}
+			}
 			tt.dependencies(tt.input, d)
 
 			uc := tweet.NewTweetUseCase(d.userFinder, d.tweetReader, d.tweetsCreator, d.cache)
 			var actual output
 			actual.err = uc.CreateTweet(tt.input.ctx, tt.input.tweet)
+
+			// Wait for the goroutine to finish
+			done := make(chan struct{})
+			go func() {
+				wg.Wait()
+				close(done)
+			}()
+			if done != nil {
+				select {
+				case <-done:
+				case <-time.After(2 * time.Second):
+					t.Error("goroutine did not finish in time")
+				}
+			}
+
 			tt.assert(t, tt.output, actual)
 		})
 	}

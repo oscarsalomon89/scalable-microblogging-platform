@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: postgres:16.3
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=twitterdb
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - twitter-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d twitterdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  migrate:
+    image: migrate/migrate
+    container_name: migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./migrations:/migrations
+    entrypoint:
+      [
+        "migrate",
+        "-path",
+        "/migrations",
+        "-database",
+        "postgres://admin:admin@postgres:5432/twitterdb?sslmode=disable",
+        "up",
+      ]
+    networks:
+      - twitter-network
+
+  redis:
+    image: redis:8.0
+    container_name: redis
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=
+    command: ["redis-server", "--requirepass", ""]
+    networks:
+      - twitter-network
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+
+networks:
+  twitter-network:
+    driver: bridge
+
+volumes:
+  pgdata:
+  redisdata:

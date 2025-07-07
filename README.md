@@ -112,6 +112,7 @@ Main endpoints:
 
 - `POST /api/v1/users` - Register user
 - `POST /api/v1/users/follow` - Follow a user
+- `POST /api/v1/users/unfollow` - Unfollow a user
 - `POST /api/v1/tweets` - Create tweet
 - `GET /api/v1/tweets/timeline` - List tweets
 

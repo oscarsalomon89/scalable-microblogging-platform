@@ -4,11 +4,18 @@ import (
 	"context"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/oscarsalomon89/go-hexagonal/internal/application/user"
 	"github.com/oscarsalomon89/go-hexagonal/internal/application/user/mocks"
+	twcontext "github.com/oscarsalomon89/go-hexagonal/pkg/context"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
+
+func init() {
+	twcontext.NewLogger()
+}
 
 func Test_userUseCase_CreateUser(t *testing.T) {
 	type input struct {
@@ -36,7 +43,7 @@ func Test_userUseCase_CreateUser(t *testing.T) {
 		{
 			name: "should return error if username is empty",
 			input: input{
-				ctx:  context.Background(),
+				ctx:  twcontext.NewTestContext(),
 				user: &user.User{Username: ""},
 			},
 			output:       output{err: user.ErrInvalidInput},
@@ -48,7 +55,7 @@ func Test_userUseCase_CreateUser(t *testing.T) {
 		{
 			name: "should return error if finder.ExistsByUsername returns error",
 			input: input{
-				ctx:  context.Background(),
+				ctx:  twcontext.NewTestContext(),
 				user: &user.User{Username: "alice"},
 			},
 			output: output{err: fmt.Errorf("failed to check username: %w", assert.AnError)},
@@ -62,7 +69,7 @@ func Test_userUseCase_CreateUser(t *testing.T) {
 		{
 			name: "should return error if username already exists",
 			input: input{
-				ctx:  context.Background(),
+				ctx:  twcontext.NewTestContext(),
 				user: &user.User{Username: "bob"},
 			},
 			output: output{err: user.ErrUsernameExists},
@@ -76,7 +83,7 @@ func Test_userUseCase_CreateUser(t *testing.T) {
 		{
 			name: "should return error if creator.CreateUser returns error",
 			input: input{
-				ctx:  context.Background(),
+				ctx:  twcontext.NewTestContext(),
 				user: &user.User{Username: "carol"},
 			},
 			output: output{err: fmt.Errorf("failed to create user: %w", assert.AnError)},
@@ -91,7 +98,7 @@ func Test_userUseCase_CreateUser(t *testing.T) {
 		{
 			name: "should create user successfully when username is unique",
 			input: input{
-				ctx:  context.Background(),
+				ctx:  twcontext.NewTestContext(),
 				user: &user.User{Username: "dave"},
 			},
 			output: output{err: nil},
@@ -149,7 +156,7 @@ func Test_userUseCase_FollowUser(t *testing.T) {
 		{
 			name: "should return error if followerID or followeeID is empty",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "",
 				followeeID: "123",
 			},
@@ -162,7 +169,7 @@ func Test_userUseCase_FollowUser(t *testing.T) {
 		{
 			name: "should return error if followerID equals followeeID",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "123",
 				followeeID: "123",
 			},
@@ -175,7 +182,7 @@ func Test_userUseCase_FollowUser(t *testing.T) {
 		{
 			name: "should return error if finder.ExistsByID for follower returns error",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -190,7 +197,7 @@ func Test_userUseCase_FollowUser(t *testing.T) {
 		{
 			name: "should return error if follower does not exist",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -205,7 +212,7 @@ func Test_userUseCase_FollowUser(t *testing.T) {
 		{
 			name: "should return error if finder.ExistsByID for followee returns error",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -221,7 +228,7 @@ func Test_userUseCase_FollowUser(t *testing.T) {
 		{
 			name: "should return error if followee does not exist",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -237,7 +244,7 @@ func Test_userUseCase_FollowUser(t *testing.T) {
 		{
 			name: "should return error if finder.IsFollowing returns error",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -254,7 +261,7 @@ func Test_userUseCase_FollowUser(t *testing.T) {
 		{
 			name: "should return error if already following",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -271,7 +278,7 @@ func Test_userUseCase_FollowUser(t *testing.T) {
 		{
 			name: "should return error if creator.FollowUser returns error",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -289,7 +296,7 @@ func Test_userUseCase_FollowUser(t *testing.T) {
 		{
 			name: "should follow user successfully",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -312,11 +319,29 @@ func Test_userUseCase_FollowUser(t *testing.T) {
 				finder:  mocks.NewUserFinder(t),
 				cache:   mocks.NewTimelineCache(t),
 			}
+
+			var done chan struct{}
+			// Synchronize with the goroutine
+			if tt.name == "should follow user successfully" {
+				done = make(chan struct{})
+				d.cache.On("InvalidateTimeline", twcontext.NewDetachedWithRequestID(tt.input.ctx), tt.input.followerID).Return(nil).Run(func(args mock.Arguments) {
+					close(done)
+				})
+			}
 			tt.dependencies(tt.input, d)
 
 			uc := user.NewUserUseCase(d.creator, d.finder, d.cache)
 			var actual output
 			actual.err = uc.FollowUser(tt.input.ctx, tt.input.followerID, tt.input.followeeID)
+
+			// Wait for the goroutine to finish
+			if done != nil {
+				select {
+				case <-done:
+				case <-time.After(2 * time.Second):
+					t.Error("goroutine did not finish in time")
+				}
+			}
 
 			tt.assert(t, tt.output, actual)
 		})
@@ -350,7 +375,7 @@ func Test_userUseCase_UnfollowUser(t *testing.T) {
 		{
 			name: "should return error if followerID or followeeID is empty",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "",
 				followeeID: "123",
 			},
@@ -363,7 +388,7 @@ func Test_userUseCase_UnfollowUser(t *testing.T) {
 		{
 			name: "should return error if followerID equals followeeID",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "123",
 				followeeID: "123",
 			},
@@ -376,7 +401,7 @@ func Test_userUseCase_UnfollowUser(t *testing.T) {
 		{
 			name: "should return error if finder.ExistsByID for follower returns error",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -391,7 +416,7 @@ func Test_userUseCase_UnfollowUser(t *testing.T) {
 		{
 			name: "should return error if follower does not exist",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -406,7 +431,7 @@ func Test_userUseCase_UnfollowUser(t *testing.T) {
 		{
 			name: "should return error if finder.ExistsByID for followee returns error",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -422,7 +447,7 @@ func Test_userUseCase_UnfollowUser(t *testing.T) {
 		{
 			name: "should return error if followee does not exist",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -438,7 +463,7 @@ func Test_userUseCase_UnfollowUser(t *testing.T) {
 		{
 			name: "should return error if finder.IsFollowing returns error",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -455,7 +480,7 @@ func Test_userUseCase_UnfollowUser(t *testing.T) {
 		{
 			name: "should return error if not following",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -472,7 +497,7 @@ func Test_userUseCase_UnfollowUser(t *testing.T) {
 		{
 			name: "should return error if creator.UnfollowUser returns error",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -490,7 +515,7 @@ func Test_userUseCase_UnfollowUser(t *testing.T) {
 		{
 			name: "should unfollow user successfully",
 			input: input{
-				ctx:        context.Background(),
+				ctx:        twcontext.NewTestContext(),
 				followerID: "f1",
 				followeeID: "f2",
 			},
@@ -513,11 +538,30 @@ func Test_userUseCase_UnfollowUser(t *testing.T) {
 				finder:  mocks.NewUserFinder(t),
 				cache:   mocks.NewTimelineCache(t),
 			}
+
+			var done chan struct{}
+			// Synchronize with the goroutine
+			if tt.name == "should unfollow user successfully" {
+				done = make(chan struct{})
+				d.cache.On("InvalidateTimeline", twcontext.NewDetachedWithRequestID(tt.input.ctx), tt.input.followerID).Return(nil).Run(func(args mock.Arguments) {
+					close(done)
+				})
+			}
+
 			tt.dependencies(tt.input, d)
 
 			uc := user.NewUserUseCase(d.creator, d.finder, d.cache)
 			var actual output
 			actual.err = uc.UnfollowUser(tt.input.ctx, tt.input.followerID, tt.input.followeeID)
+
+			// Wait for the goroutine to finish
+			if done != nil {
+				select {
+				case <-done:
+				case <-time.After(2 * time.Second):
+					t.Error("goroutine did not finish in time")
+				}
+			}
 
 			tt.assert(t, tt.output, actual)
 		})
