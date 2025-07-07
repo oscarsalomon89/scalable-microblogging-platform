@@ -109,8 +109,6 @@ make compose-dev-down
 
 6. Running Migrations Manually
 
-To run migrations separately:
-
 ```sh
 make migrate-up    # Apply all pending migrations
 make migrate-down  # Revert the last migration
