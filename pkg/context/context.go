@@ -30,6 +30,10 @@ func NewDetachedWithRequestID(ctx context.Context) context.Context {
 	return context.WithValue(context.Background(), requestIDKey, requestID)
 }
 
+func NewTestContext() context.Context {
+	return context.WithValue(context.Background(), requestIDKey, newRequestID())
+}
+
 func newRequestID() string {
 	var id string
 	logID, err := uuid.NewV4()

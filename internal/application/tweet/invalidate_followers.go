@@ -17,6 +17,11 @@ func (uc *usecase) invalidateFollowersTimelinesAsync(ctx context.Context, userID
 		logger.WithError(err).Error("Failed to get followers of user")
 		return
 	}
+
+	if len(followers) == 0 {
+		return
+	}
+
 	for _, followerID := range followers {
 		fID := followerID
 		go func() {

@@ -8,34 +8,12 @@ import (
 	twcontext "github.com/oscarsalomon89/go-hexagonal/pkg/context"
 )
 
-type (
-	UserFinder interface {
-		ExistsByID(ctx context.Context, id string) (bool, error)
-		GetFollowers(ctx context.Context, id string) ([]string, error)
-		GetFollowees(ctx context.Context, userID string) ([]string, error)
-	}
-
-	TweetCreator interface {
-		CreateTweet(ctx context.Context, tweet *Tweet) error
-	}
-
-	TweetReader interface {
-		GetTweetsByUserIDs(ctx context.Context, userIDs []string, limit, offset int) ([]Tweet, error)
-	}
-
-	TimelineCache interface {
-		InvalidateTimeline(ctx context.Context, userID string) error
-		GetTimeline(ctx context.Context, userID string) ([]Tweet, error)
-		SetTimeline(ctx context.Context, userID string, tweets []Tweet) error
-	}
-
-	usecase struct {
-		userFinder    UserFinder
-		tweetReader   TweetReader
-		tweetsCreator TweetCreator
-		cache         TimelineCache
-	}
-)
+type usecase struct {
+	userFinder    UserFinder
+	tweetReader   TweetReader
+	tweetsCreator TweetCreator
+	cache         TimelineCache
+}
 
 func NewTweetUseCase(userFinder UserFinder, tweetReader TweetReader, tweetsCreator TweetCreator, cache TimelineCache) *usecase {
 	return &usecase{

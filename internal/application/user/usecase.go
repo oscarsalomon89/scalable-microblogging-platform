@@ -7,29 +7,11 @@ import (
 	twcontext "github.com/oscarsalomon89/go-hexagonal/pkg/context"
 )
 
-type (
-	UserFinder interface {
-		ExistsByUsername(ctx context.Context, username string) (bool, error)
-		ExistsByID(ctx context.Context, id string) (bool, error)
-		IsFollowing(ctx context.Context, followerID, followeeID string) (bool, error)
-	}
-
-	UserCreator interface {
-		CreateUser(ctx context.Context, user *User) error
-		FollowUser(ctx context.Context, followerID, followeeID string) error
-		UnfollowUser(ctx context.Context, followerID, followeeID string) error
-	}
-
-	TimelineCache interface {
-		InvalidateTimeline(ctx context.Context, userID string) error
-	}
-
-	userUseCase struct {
-		creator UserCreator
-		finder  UserFinder
-		cache   TimelineCache
-	}
-)
+type userUseCase struct {
+	creator UserCreator
+	finder  UserFinder
+	cache   TimelineCache
+}
 
 func NewUserUseCase(creator UserCreator, finder UserFinder, cache TimelineCache) *userUseCase {
 	return &userUseCase{creator: creator, finder: finder, cache: cache}
