@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	tweet "github.com/oscarsalomon89/go-hexagonal/internal/application/tweet"
+	tweet "github.com/oscarsalomon89/scalable-microblogging-platform/internal/application/tweet"
 	mock "github.com/stretchr/testify/mock"
 )
 

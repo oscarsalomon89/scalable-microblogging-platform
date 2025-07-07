@@ -2,11 +2,11 @@ package modules
 
 import (
 	"github.com/gin-gonic/gin"
-	tweethdl "github.com/oscarsalomon89/go-hexagonal/internal/adapters/http/tweet"
-	tweetrepo "github.com/oscarsalomon89/go-hexagonal/internal/adapters/postgres/tweet"
-	userrepo "github.com/oscarsalomon89/go-hexagonal/internal/adapters/postgres/user"
-	timelinerepo "github.com/oscarsalomon89/go-hexagonal/internal/adapters/redis/timeline"
-	"github.com/oscarsalomon89/go-hexagonal/internal/application/tweet"
+	tweethdl "github.com/oscarsalomon89/scalable-microblogging-platform/internal/adapters/http/tweet"
+	tweetrepo "github.com/oscarsalomon89/scalable-microblogging-platform/internal/adapters/postgres/tweet"
+	userrepo "github.com/oscarsalomon89/scalable-microblogging-platform/internal/adapters/postgres/user"
+	timelinerepo "github.com/oscarsalomon89/scalable-microblogging-platform/internal/adapters/redis/timeline"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/application/tweet"
 	"go.uber.org/fx"
 )
 

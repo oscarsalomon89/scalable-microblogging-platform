@@ -3,8 +3,8 @@ package common
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/oscarsalomon89/go-hexagonal/pkg/httperrors"
-	"github.com/oscarsalomon89/go-hexagonal/pkg/validator"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/pkg/httperrors"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/pkg/validator"
 )
 
 const headerUserID = "X-User-ID"

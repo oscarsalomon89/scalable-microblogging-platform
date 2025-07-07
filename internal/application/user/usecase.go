@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	twcontext "github.com/oscarsalomon89/go-hexagonal/pkg/context"
+	twcontext "github.com/oscarsalomon89/scalable-microblogging-platform/pkg/context"
 )
 
 type userUseCase struct {

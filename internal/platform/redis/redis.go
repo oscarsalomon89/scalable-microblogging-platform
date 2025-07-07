@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/oscarsalomon89/go-hexagonal/internal/platform/config"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/platform/config"
 	"github.com/redis/go-redis/v9"
 )
 

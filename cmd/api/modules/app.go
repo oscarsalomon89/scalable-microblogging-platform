@@ -1,11 +1,11 @@
 package modules
 
 import (
-	"github.com/oscarsalomon89/go-hexagonal/internal/platform/config"
-	"github.com/oscarsalomon89/go-hexagonal/internal/platform/environment"
-	db "github.com/oscarsalomon89/go-hexagonal/internal/platform/pg"
-	clonctx "github.com/oscarsalomon89/go-hexagonal/pkg/context"
-	"github.com/oscarsalomon89/go-hexagonal/pkg/validator"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/platform/config"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/platform/environment"
+	db "github.com/oscarsalomon89/scalable-microblogging-platform/internal/platform/pg"
+	clonctx "github.com/oscarsalomon89/scalable-microblogging-platform/pkg/context"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/pkg/validator"
 	"go.uber.org/fx"
 )
 

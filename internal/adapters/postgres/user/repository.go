@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/oscarsalomon89/go-hexagonal/internal/application/user"
-	db "github.com/oscarsalomon89/go-hexagonal/internal/platform/pg"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/application/user"
+	db "github.com/oscarsalomon89/scalable-microblogging-platform/internal/platform/pg"
 )
 
 type userRepository struct {

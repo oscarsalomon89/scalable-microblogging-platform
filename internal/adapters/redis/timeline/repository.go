@@ -8,7 +8,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/oscarsalomon89/go-hexagonal/internal/application/tweet"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/application/tweet"
 	"github.com/redis/go-redis/v9"
 )
 

@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	user "github.com/oscarsalomon89/go-hexagonal/internal/application/user"
+	user "github.com/oscarsalomon89/scalable-microblogging-platform/internal/application/user"
 	mock "github.com/stretchr/testify/mock"
 )
 

@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/oscarsalomon89/go-hexagonal/internal/adapters/http/common"
-	"github.com/oscarsalomon89/go-hexagonal/internal/application/user"
-	twcontext "github.com/oscarsalomon89/go-hexagonal/pkg/context"
-	"github.com/oscarsalomon89/go-hexagonal/pkg/httperrors"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/adapters/http/common"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/application/user"
+	twcontext "github.com/oscarsalomon89/scalable-microblogging-platform/pkg/context"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/pkg/httperrors"
 )
 
 type (

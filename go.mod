@@ -1,4 +1,4 @@
-module github.com/oscarsalomon89/go-hexagonal
+module github.com/oscarsalomon89/scalable-microblogging-platform
 
 go 1.23.5
 

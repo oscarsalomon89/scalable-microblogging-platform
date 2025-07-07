@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oscarsalomon89/go-hexagonal/internal/application/tweet"
-	"github.com/oscarsalomon89/go-hexagonal/internal/application/tweet/mocks"
-	"github.com/oscarsalomon89/go-hexagonal/internal/application/user"
-	twcontext "github.com/oscarsalomon89/go-hexagonal/pkg/context"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/application/tweet"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/application/tweet/mocks"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/application/user"
+	twcontext "github.com/oscarsalomon89/scalable-microblogging-platform/pkg/context"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

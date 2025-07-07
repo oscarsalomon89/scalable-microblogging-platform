@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/oscarsalomon89/go-hexagonal/internal/platform/config"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/platform/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

@@ -7,7 +7,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/oscarsalomon89/go-hexagonal/internal/platform/config"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/platform/config"
 )
 
 func RunMigrations(cfg config.Database) error {

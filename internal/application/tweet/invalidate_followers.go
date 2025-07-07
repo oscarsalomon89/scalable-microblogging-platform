@@ -3,7 +3,7 @@ package tweet
 import (
 	"context"
 
-	twcontext "github.com/oscarsalomon89/go-hexagonal/pkg/context"
+	twcontext "github.com/oscarsalomon89/scalable-microblogging-platform/pkg/context"
 )
 
 // invalidateFollowersTimelinesAsync invalidates the timeline cache for all followers of a user asynchronously.

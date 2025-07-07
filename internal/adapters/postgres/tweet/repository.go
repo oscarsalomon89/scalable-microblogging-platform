@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/oscarsalomon89/go-hexagonal/internal/application/tweet"
-	db "github.com/oscarsalomon89/go-hexagonal/internal/platform/pg"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/application/tweet"
+	db "github.com/oscarsalomon89/scalable-microblogging-platform/internal/platform/pg"
 )
 
 type tweetRepository struct {

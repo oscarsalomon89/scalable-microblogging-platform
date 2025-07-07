@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/oscarsalomon89/go-hexagonal/internal/platform/config"
-	"github.com/oscarsalomon89/go-hexagonal/internal/platform/httpserver"
-	db "github.com/oscarsalomon89/go-hexagonal/internal/platform/pg"
-	pkgredis "github.com/oscarsalomon89/go-hexagonal/internal/platform/redis"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/platform/config"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/platform/httpserver"
+	db "github.com/oscarsalomon89/scalable-microblogging-platform/internal/platform/pg"
+	pkgredis "github.com/oscarsalomon89/scalable-microblogging-platform/internal/platform/redis"
 	"go.uber.org/fx"
 )
 

@@ -2,10 +2,10 @@ package modules
 
 import (
 	"github.com/gin-gonic/gin"
-	userhdl "github.com/oscarsalomon89/go-hexagonal/internal/adapters/http/user"
-	userrepo "github.com/oscarsalomon89/go-hexagonal/internal/adapters/postgres/user"
-	timelinerepo "github.com/oscarsalomon89/go-hexagonal/internal/adapters/redis/timeline"
-	"github.com/oscarsalomon89/go-hexagonal/internal/application/user"
+	userhdl "github.com/oscarsalomon89/scalable-microblogging-platform/internal/adapters/http/user"
+	userrepo "github.com/oscarsalomon89/scalable-microblogging-platform/internal/adapters/postgres/user"
+	timelinerepo "github.com/oscarsalomon89/scalable-microblogging-platform/internal/adapters/redis/timeline"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/application/user"
 	"go.uber.org/fx"
 )
 

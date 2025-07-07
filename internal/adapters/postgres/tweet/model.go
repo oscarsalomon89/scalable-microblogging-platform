@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/oscarsalomon89/go-hexagonal/internal/application/tweet"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/application/tweet"
 	"gorm.io/gorm"
 )
 

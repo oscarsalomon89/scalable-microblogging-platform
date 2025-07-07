@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/oscarsalomon89/go-hexagonal/internal/platform/environment"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/platform/environment"
 )
 
 const (

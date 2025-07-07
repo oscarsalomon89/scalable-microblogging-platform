@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/oscarsalomon89/go-hexagonal/internal/application/user"
-	"github.com/oscarsalomon89/go-hexagonal/pkg/httperrors"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/internal/application/user"
+	"github.com/oscarsalomon89/scalable-microblogging-platform/pkg/httperrors"
 )
 
 func handleError(c *gin.Context, err error) {
